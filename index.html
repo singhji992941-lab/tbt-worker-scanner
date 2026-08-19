@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
+
+  <title>TBT Worker Scanner</title>
+
+  <script src="https://unpkg.com/html5-qrcode"></script>
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      color: #222;
+    }
+
+    .header {
+      background: #1f4e78;
+      color: white;
+      padding: 18px;
+      font-size: 20px;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 22px;
+      margin-top: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,.08);
+    }
+
+    h2 {
+      margin-top: 0;
+    }
+
+    .info {
+      background: #eef5fb;
+      color: #1f4e78;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+    }
+
+    button {
+      width: 100%;
+      padding: 13px;
+      margin-top: 15px;
+      border: none;
+      border-radius: 7px;
+      background: #1f4e78;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      background: #aaa;
+    }
+
+    .message {
+      margin-top: 15px;
+      padding: 12px;
+      border-radius: 7px;
+    }
+
+    .success {
+      background: #eaf7ee;
+      color: #18794e;
+    }
+
+    .error {
+      background: #fdecea;
+      color: #b42318;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    #scanner {
+      width: 100%;
+      margin-top: 20px;
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+
+<div class="header">
+
+  TBT WORKER SCANNER
+
+</div>
+
+
+<div class="container">
+
+
+  <div class="card">
+
+    <h2>
+      Worker Attendance
+    </h2>
+
+
+    <div class="info">
+
+      Supervisor ke phone par
+      dikh raha QR scan karein.
+
+    </div>
+
+
+    <button
+      id="startScannerBtn"
+      onclick="startScanner()">
+
+      SCAN SUPERVISOR QR
+
+    </button>
+
+
+    <div id="scanner"></div>
+
+
+    <div
+      id="scannerMessage">
+    </div>
+
+  </div>
+
+
+</div>
+
+
+<script>
+
+let qrScanner = null;
+
+
+/* =========================
+   START SCANNER
+========================= */
+
+function startScanner() {
+
+  const message =
+    document.getElementById(
+      'scannerMessage'
+    );
+
+
+  message.className =
+    'message';
+
+  message.textContent =
+    'Camera start ho raha hai...';
+
+
+  const btn =
+    document.getElementById(
+      'startScannerBtn'
+    );
+
+  btn.disabled = true;
+
+  btn.textContent =
+    'CAMERA STARTING...';
+
+
+  if (!qrScanner) {
+
+    qrScanner =
+      new Html5Qrcode(
+        'scanner'
+      );
+
+  }
+
+
+  qrScanner.start(
+
+    {
+      facingMode: 'environment'
+    },
+
+    {
+      fps: 10,
+
+      qrbox: {
+        width: 250,
+        height: 250
+      }
+
+    },
+
+    function(decodedText) {
+
+      message.className =
+        'message success';
+
+      message.textContent =
+        '✓ QR scanned successfully.';
+
+
+      stopScanner();
+
+
+      /*
+       * Abhi sirf QR read test.
+       * Server verification next step me.
+       */
+
+      alert(
+        'QR DATA:\n\n' +
+        decodedText
+      );
+
+    },
+
+    function(errorMessage) {
+
+      // Normal scanning errors.
+      // Ignore.
+
+    }
+
+  )
+
+  .catch(function(error) {
+
+    btn.disabled = false;
+
+    btn.textContent =
+      'SCAN SUPERVISOR QR';
+
+
+    message.className =
+      'message error';
+
+    message.textContent =
+      'Camera start nahi ho saka: ' +
+      error;
+
+  });
+
+}
+
+
+/* =========================
+   STOP SCANNER
+========================= */
+
+function stopScanner() {
+
+  if (!qrScanner) {
+    return;
+  }
+
+
+  qrScanner
+    .stop()
+    .then(function() {
+
+      const btn =
+        document.getElementById(
+          'startScannerBtn'
+        );
+
+      btn.disabled = false;
+
+      btn.textContent =
+        'SCAN SUPERVISOR QR';
+
+    })
+
+    .catch(function(error) {
+
+      console.log(
+        'Scanner stop error:',
+        error
+      );
+
+    });
+
+}
+
+</script>
+
+
+</body>
+
+</html>
