@@ -225,106 +225,17 @@ function startScanner() {
     function(decodedText) {
 
   message.className =
-    'message';
+    'message success';
 
   message.textContent =
-    'QR scanned. Server verification ho raha hai...';
+    '✓ QR scanned successfully.';
 
   stopScanner();
 
-
-  // =========================
-  // VERIFY QR WITH SERVER
-  // =========================
-
-  const url =
-    APPS_SCRIPT_URL +
-    '?page=verifyQr&token=' +
-    encodeURIComponent(decodedText);
-
-
-  fetch(url)
-
-    .then(function(response) {
-
-      if (!response.ok) {
-
-        throw new Error(
-          'Server response error: ' +
-          response.status
-        );
-
-      }
-
-      return response.json();
-
-    })
-
-    .then(function(result) {
-
-      console.log(
-        'SERVER RESPONSE:',
-        result
-      );
-
-
-      if (
-        !result ||
-        !result.success
-      ) {
-
-        message.className =
-          'message error';
-
-        message.textContent =
-          result &&
-          result.message
-            ? result.message
-            : 'QR verification failed.';
-
-        return;
-
-      }
-
-
-      // =========================
-      // QR VERIFIED
-      // =========================
-
-      message.className =
-        'message success';
-
-      message.textContent =
-        '✓ QR VERIFIED SUCCESSFULLY';
-
-
-      alert(
-        'QR VERIFIED!\n\n' +
-        'TBT ID: ' +
-        result.tbtId +
-        '\n' +
-        'Supervisor ID: ' +
-        result.supervisorId
-      );
-
-    })
-
-    .catch(function(error) {
-
-      console.error(
-        'SERVER ERROR:',
-        error
-      );
-
-
-      message.className =
-        'message error';
-
-      message.textContent =
-        'Server verification failed: ' +
-        error.message;
-
-    });
+  alert(
+    'QR DATA:\n\n' +
+    decodedText
+  );
 
 },
 
