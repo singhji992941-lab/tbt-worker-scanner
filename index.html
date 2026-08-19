@@ -224,21 +224,11 @@ function startScanner() {
 
     function(decodedText) {
 
-  message.className =
-    'message success';
-
-  message.textContent =
-    '✓ QR scanned successfully.';
-
   stopScanner();
 
-  alert(
-    'QR DATA:\n\n' +
-    decodedText
-  );
+  verifySupervisorQr(decodedText);
 
 },
-
     function(errorMessage) {
 
       // Normal scanning errors.
