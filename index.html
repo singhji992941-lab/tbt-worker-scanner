@@ -305,6 +305,108 @@ function stopScanner() {
     });
 
 }
+function verifySupervisorQr(decodedText) {
+
+  const message =
+    document.getElementById(
+      'scannerMessage'
+    );
+
+  message.className =
+    'message';
+
+  message.textContent =
+    'QR verify ho raha hai...';
+
+
+  const url =
+    APPS_SCRIPT_URL +
+    '?page=verifyQr&token=' +
+    encodeURIComponent(decodedText);
+
+
+  fetch(url)
+
+    .then(function(response) {
+
+      if (!response.ok) {
+
+        throw new Error(
+          'HTTP Error ' +
+          response.status
+        );
+
+      }
+
+      return response.json();
+
+    })
+
+    .then(function(result) {
+
+      console.log(
+        'QR VERIFY RESPONSE:',
+        result
+      );
+
+
+      if (
+        !result ||
+        !result.success
+      ) {
+
+        message.className =
+          'message error';
+
+        message.textContent =
+          result &&
+          result.message
+            ? result.message
+            : 'QR verification failed.';
+
+        return;
+
+      }
+
+
+      message.className =
+        'message success';
+
+      message.textContent =
+        '✓ Supervisor QR verified successfully.';
+
+
+      alert(
+        'QR VERIFIED SUCCESSFULLY\n\n' +
+        'TBT ID: ' +
+        result.tbtId +
+        '\n' +
+        'Supervisor ID: ' +
+        result.supervisorId
+      );
+
+    })
+
+    .catch(function(error) {
+
+      console.error(
+        'QR VERIFY ERROR:',
+        error
+      );
+
+
+      message.className =
+        'message error';
+
+      message.textContent =
+        'Server verification failed: ' +
+        error.message;
+
+    });
+
+}
+
+  
 
 </script>
 
